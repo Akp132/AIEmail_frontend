@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const API_BASE = process.env.REACT_APP_API_BASE || '';
+
 function App() {
   const [recipients, setRecipients] = useState('');
   const [prompt, setPrompt] = useState('');
@@ -7,14 +9,14 @@ function App() {
   const [subject, setSubject] = useState('');
 
   const handleGenerate = async () => {
-    console.log('[FRONTEND] Submitting prompt to /api/generate...');
+    console.log('[FRONTEND] Submitting prompt to:', `${API_BASE}/api/generate`);
     try {
       if (!prompt) {
         alert("Please provide a prompt.");
         return;
       }
 
-      const response = await fetch('/api/generate', {
+      const response = await fetch(`${API_BASE}/api/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -23,7 +25,7 @@ function App() {
       });
 
       const data = await response.json();
-      console.log('[FRONTEND] Received response:', data);
+      console.log('[FRONTEND] Generation response:', data);
 
       if (data.error) {
         alert(data.error);
@@ -38,14 +40,14 @@ function App() {
   };
 
   const handleSend = async () => {
-    console.log('[FRONTEND] Sending email to /api/send...');
+    console.log('[FRONTEND] Sending email to:', recipients);
     try {
       if (!recipients || !generatedEmail) {
         alert("Recipient(s) and email content are required to send.");
         return;
       }
 
-      const response = await fetch('/api/send', {
+      const response = await fetch(`${API_BASE}/api/send`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
